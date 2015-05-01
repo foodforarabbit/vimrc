@@ -1,57 +1,46 @@
-set nocompatible              " be iMproved, required
-" TODO: test this
-filetype on                  " required
-syntax on
 au BufNewFile,BufRead *.es6 set filetype=js
+
+"
+" Vundle Config
+"
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
-
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
 Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
 Plugin 'Valloric/YouCompleteMe'
-" Track the engine.
 Plugin 'SirVer/ultisnips'
-
-" " Snippets are separated from the engine. Add this if you want them:
 Plugin 'honza/vim-snippets'
 Bundle 'gertjanreynaert/cobalt2-vim-theme'
 
-" Git plugin not hosted on GitHub
-"Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-"Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Avoid a name conflict with L9
-"Plugin 'user/L9', {'name': 'newL9'}
+call vundle#end()            
+filetype plugin indent on    
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+"
+" Generic Settings 
+"
+
+set nocompatible              " be iMproved, required
+set noswapfile
+filetype on                  " required
+syntax on
 
 set number
 
-" enable this for tab indentation
 "set tabstop=2 shiftwidth=2 noexpandtab
 "enable this for space identation
 set tabstop=2 shiftwidth=2 expandtab
-"set shiftwidth=2
 
+call pathogen#infect()
 
-" 256 color settings
+"
+" Style Settings
+"
+
 set t_Co=256
-
 set background=dark
 
 " set colorscheme
@@ -67,33 +56,44 @@ hi SignColumn ctermbg=Black
 " hi Folded ctermbg=green
 
 set runtimepath^=~/.vim/bundle/ctrlp.vim
-call pathogen#infect()
+
 syntax enable
 "filetype plugin indent on
 
 " show wrap line indicator
-set colorcolumn=80
+highlight ColorColumn ctermbg=black guibg=black
+set colorcolumn=81
 
 au BufWinLeave ?* mkview
 au BufWinEnter ?* silent loadview
 
+"
 " Syntastic Configuration 
+"
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
+
+let g:syntastic_javascript_checkers = ['eslint']
 
 "let g:syntastic_always_populate_loc_list = 1
 "let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
-" Ultisnips configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+"
+" Ultisnips configuration. 
+"
+
+
+" Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+"
 "let g:UltiSnipsExpandTrigger="<tab>"
 "let g:UltiSnipsJumpForwardTrigger="<c-b>"
 "let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 " If you want :UltiSnipsEdit to split your window.
-"let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 function! g:UltiSnips_Complete()
     call UltiSnips#ExpandSnippet()
@@ -119,7 +119,10 @@ let g:UltiSnipsListSnippets="<c-e>"
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 
+"
 " The Silver Searcher
+"
+
 if executable('ag')
   " Use ag over grep 
   set grepprg=ag\ --nogroup\ --nocolor
@@ -130,10 +133,25 @@ if executable('ag')
 endif
 
 " bind \ (backward slash) to grep shortcut
-"command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
 nnoremap \ :Ag<SPACE>
 " bind K to grep word under cursor
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+
+"
+" Rainbow Paratheses Config
+"
+
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
+
+"
+" Key bindings o O
+"
 
 if has("user_commands")
 	command! -bang -nargs=? -complete=file E e<bang> <args>
@@ -152,3 +170,18 @@ if has("user_commands")
 	command! -bang Spaces set tabstop=2 shiftwidth=2 expandtab<bang>
 	command! -bang Scss UltiSnipsAddFiletypes scss.css<bang>
 endif
+
+
+"
+" Show Relative Line Numbers
+"
+
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set number
+  else
+    set relativenumber
+  endif
+endfunc
+
+nnoremap <C-n> :call NumberToggle()<cr>
