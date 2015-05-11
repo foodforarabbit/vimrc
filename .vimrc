@@ -1,4 +1,24 @@
+"
+" JavaScript Settings
+"
+
 au BufNewFile,BufRead *.es6 set filetype=js
+
+"
+" vim-plug Config
+"
+call plug#begin('~/.vim/plugged')
+
+" Make sure you use single quotes
+Plug 'junegunn/seoul256.vim'
+Plug 'junegunn/vim-easy-align'
+" On-demand loading
+Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+" Plugin options
+Plug 'nsf/gocode', { 'tag': 'go.weekly.2012-03-13', 'rtp': 'vim' }
+Plug 'junegunn/rainbow_parentheses.vim'
+
+call plug#end()
 
 "
 " Vundle Config
@@ -14,6 +34,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
+Plugin 'luochen1990/rainbow'
 Bundle 'gertjanreynaert/cobalt2-vim-theme'
 
 call vundle#end()            
@@ -23,13 +44,14 @@ filetype plugin indent on
 " Generic Settings 
 "
 
-set nocompatible              " be iMproved, required
+set nocompatible
 set noswapfile
-filetype on                  " required
+filetype on                  
 syntax on
 
-set number
+set relativenumber
 
+"enable this if your team is stuck in the 90's
 "set tabstop=2 shiftwidth=2 noexpandtab
 "enable this for space identation
 set tabstop=2 shiftwidth=2 expandtab
@@ -46,7 +68,7 @@ set background=dark
 " set colorscheme
 colorscheme cobalt2
 
-"set hls
+set hls
 " custom color settings
 "hi Directory guifg=#FF0000 ctermfg=red
 hi SignColumn ctermbg=Black
@@ -143,14 +165,33 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 " Rainbow Paratheses Config
 "
 
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+let g:rainbow_active = 1
 
+let g:rainbow_conf = {
+\   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+\   'ctermfgs': [125, 47, 39, 11, 161, 2, 166, 160, 46],
+\   'operators': '_,_',
+\   'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+\   'separately': {
+\       '*': {},
+\       'tex': {
+\           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+\       },
+\       'lisp': {
+\           'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
+\       },
+\       'vim': {
+\           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+\       },
+\       'html': {
+\           'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+\       },
+\       'css': 0,
+\   }
+\}
 
 "
-" Key bindings o O
+" Key bindings
 "
 
 if has("user_commands")
@@ -177,8 +218,11 @@ endif
 "
 
 function! NumberToggle()
-  if(&relativenumber == 1)
+  if(&number == 0)
     set number
+  endif
+  if(&relativenumber == 1)
+    set norelativenumber
   else
     set relativenumber
   endif
